@@ -1,6 +1,9 @@
 const createError = require('http-errors');
 const mongoose = require('mongoose');
 const User = require('../models/user.model');
+const crypto = require('crypto');
+const nodemailer = require('nodemailer');
+const transporter = require('../configs/email.config');
 
 module.exports.list = (req, res, next) => {
   User.find()
@@ -32,10 +35,20 @@ module.exports.doCreate = (req, res, next) => {
           location: {
             type: 'Point',
             coordinates: [req.body.longitude, req.body.latitude]
-          }
+          },
+          token: crypto.randomBytes(64).toString('hex')
         });
         return user.save()
           .then(user => {
+            transporter.sendMail({
+              from: '"My Awesome Project 👻" <garciapascual.clara@gmail.com>',
+              to: 'garciapascual.clara@gmail.com', 
+              subject: 'Awesome Subject', 
+              text: 'Awesome Message',
+              html: '<b>Awesome Message</b>'
+            })
+            .then(info => console.log(info))
+            .catch(error => console.log(error))
             res.redirect('/sessions/create');
           });
       }

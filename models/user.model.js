@@ -4,6 +4,7 @@ const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
 const SALT_WORK_FACTOR = 10;
 const FIRST_ADMIN_EMAIL = process.env.FIRST_ADMIN_EMAIL;
+const crypto = require('crypto');
 
 const userSchema = new mongoose.Schema({
   name: {

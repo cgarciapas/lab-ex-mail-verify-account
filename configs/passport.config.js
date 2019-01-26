@@ -20,7 +20,7 @@ passport.use('local-auth', new LocalStrategy({
   usernameField: 'email',
   passwordField: 'password'
 }, (email, password, next) => {
-  User.findOne({ email: email })
+  User.findOne({ email, verified: true })
     .then(user => {
       if (user) {
         return user.checkPassword(password)
@@ -53,7 +53,7 @@ passport.use('facebook-auth', new FBStrategy({
 
 function authenticateOAuthUser(accessToken, refreshToken, profile, next) {
   let socialId = `${profile.provider}Id`;
-  User.findOne({ [`social.${socialId}`]: profile.id })
+  User.findOne({ [`social.${socialId}`]: profile.id, verified: true })
     .then(user => {
       if (user) {
         next(null, user);
